@@ -10,23 +10,9 @@ let provider='';
 const task=ref('');
 const tasks=ref([]);
 const load = ref(false);
-// (async () => {
-//   console.log("CON VALUE", con.value);
-//   if(con.value){
-//     count.value = await todo.count();
-//     count.value = parseInt(count.value.toString());
-//     console.log("Count value by using the getter function", count.value);
-//     for(let i=1;i<=count.value;i++)
-//     {
-//       tasks.value.push(await todo.tasks(wallet.address,i));
-//       console.log("Tasks.value",tasks.value);
-//     }
-//   }
-// })();
 
 async function connect(){
   if(window.ethereum){
-  console.log("Detected!");
   provider = new ethers.BrowserProvider(window.ethereum);
   wallet = await provider.getSigner();
   await window.ethereum.request({
@@ -38,19 +24,13 @@ async function connect(){
   ]
 });
   await wallet.signMessage("Welcome to Raj's Todo Dapp for using this App, You would be needing some Sepolia ETH in your wallet, which you could get from here https://sepoliafaucet.com/");
-  console.log(provider);
-  console.log(wallet);
-  console.log(wallet.address);
   con.value = true;
   const todo = await new ethers.Contract("0xBA48a0aF78381C573Ed01e36b08021BaF59cbAee",Todoabi.abi, wallet);
   if(con.value){
     count.value = await todo.actual_count();
     count.value = parseInt(count.value.toString());
-    console.log("Count value by using the getter function", count.value);
     for(let i=1;i<=count.value;i++)
     {
-      console.log("Count", count.value);
-      console.log(await todo.tasks(wallet.address, i));
       tasks.value.push(await todo.tasks(wallet.address,i));
     }
   }
@@ -62,16 +42,12 @@ else{
 
 async function add(){
   const todo = await new ethers.Contract("0xBA48a0aF78381C573Ed01e36b08021BaF59cbAee",Todoabi.abi, wallet);
-  console.log("Task", task.value);
   await wallet.signMessage(`You are adding a New Task ${task.value}`);
-  console.log("Count before", await todo.actual_count());
   const adding = await todo.create_task(task.value);
-  console.log("Task Transaction", adding);
   load.value = true;
   await adding.wait();
   //window.location.reload();
   count.value = await todo.actual_count(); // LATEST
-  console.log("Actual Count", await todo.actual_count());
   tasks.value.push(await todo.tasks(wallet.address,count.value));
   load.value = false;
   task.value='';
@@ -79,7 +55,6 @@ async function add(){
 
 async function toggle(id){
   const todo = await new ethers.Contract("0xBA48a0aF78381C573Ed01e36b08021BaF59cbAee",Todoabi.abi, wallet);
-  console.log("t", tasks.value);
   const tx = await todo.check(id);
   await tx.wait();
   //window.location.reload();
@@ -87,8 +62,6 @@ async function toggle(id){
   tasks.value = []
   for(let i=1;i<=count.value;i++)
     {
-      console.log("Count", count.value);
-      console.log(await todo.tasks(wallet.address, i));
       tasks.value.push(await todo.tasks(wallet.address,i));
     }
 }
