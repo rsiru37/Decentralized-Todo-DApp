@@ -1,6 +1,6 @@
 <script setup>
 import { ethers } from "ethers";
-import { ref } from 'vue'; //'artifacts\contracts\Todolist.sol\Todolist.json'
+import { ref } from 'vue';
 import Todoabi from '../../artifacts/contracts/Todolist.sol/Todolist.json'
 //import Todoabi from 'artifacts\contracts\Todolist.sol\Todolist.json';
 const con = ref();
